@@ -1,0 +1,14 @@
+---
+source: prqlc/prqlc/tests/integration/queries.rs
+expression: "from invoices\nselect { invoice_id, customer_id, invoice_date }\nappend (\n  from invoices\n  select { invoice_id, customer_id, invoice_date }\n)\ngroup { customer_id } (aggregate { count = count invoice_id })\n"
+input_file: prqlc/prqlc/tests/integration/queries/append_group.prql
+---
+from invoices
+select {invoice_id, customer_id, invoice_date}
+append (
+  from invoices
+  select {invoice_id, customer_id, invoice_date}
+)
+group {customer_id} (aggregate {
+  count = count invoice_id,
+})
