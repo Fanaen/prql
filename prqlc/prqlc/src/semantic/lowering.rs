@@ -498,7 +498,7 @@ impl Lowerer {
     }
 
     // To handle the few position operation like append, we keep track of earlier lineages
-    // and we we match their column order and count.
+    // and we match their column order and count.
     fn apply_column_order_and_lower_relation(&mut self, expr: pl::Expr) -> Result<Option<Lineage>> {
         let mut lineage = expr.lineage.clone();
 
@@ -540,7 +540,6 @@ impl Lowerer {
             } = projected_column
             else {
                 // We do not need to support wildcards since we need a precise column count anyway.
-                //
                 trace!("projection on wildcards are not supported");
                 return false;
             };
@@ -564,7 +563,7 @@ impl Lowerer {
                 new_projection.push(first_candidate.clone());
             } else {
                 trace!("no candidate found for {projected_column_name:?}");
-                return false;
+                // return false;
             }
 
             for ignored_candidate in candidates {
@@ -573,9 +572,13 @@ impl Lowerer {
             }
         }
 
-        trace!("applying new projection {new_projection:#?}");
-        *columns_to_reorder = new_projection;
-        true
+        if !new_projection.is_empty() {
+            trace!("applying new projection {new_projection:#?}");
+            *columns_to_reorder = new_projection;
+            true
+        } else {
+            false
+        }
     }
 
     // Result is stored in self.pipeline

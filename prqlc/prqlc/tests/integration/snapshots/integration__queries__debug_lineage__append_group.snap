@@ -1,6 +1,6 @@
 ---
 source: prqlc/prqlc/tests/integration/queries.rs
-expression: "from invoices\nselect { invoice_id, customer_id, invoice_date }\nappend (\n  from invoices\n  select { invoice_id, customer_id, invoice_date }\n)\ngroup { customer_id } (aggregate { count = count invoice_id })\n"
+expression: "from invoices\nselect { invoice_date, invoice_id, customer_id }\nappend (\n  from invoices\n  select { invoice_date, invoice_id, customer_id }\n)\ngroup { customer_id } (aggregate { count = count invoice_id, invoice_date })\n"
 input_file: prqlc/prqlc/tests/integration/queries/append_group.prql
 ---
 frames:
@@ -9,19 +9,19 @@ frames:
     - !Single
       name:
       - invoices
-      - invoice_id
+      - invoice_date
       target_id: 135
       target_name: null
     - !Single
       name:
       - invoices
-      - customer_id
+      - invoice_id
       target_id: 136
       target_name: null
     - !Single
       name:
       - invoices
-      - invoice_date
+      - customer_id
       target_id: 137
       target_name: null
     inputs:
@@ -35,19 +35,19 @@ frames:
     - !Single
       name:
       - invoices
-      - invoice_id
+      - invoice_date
       target_id: 123
       target_name: null
     - !Single
       name:
       - invoices
-      - customer_id
+      - invoice_id
       target_id: 124
       target_name: null
     - !Single
       name:
       - invoices
-      - invoice_date
+      - customer_id
       target_id: 125
       target_name: null
     inputs:
@@ -61,19 +61,19 @@ frames:
     - !Single
       name:
       - invoices
-      - invoice_id
+      - invoice_date
       target_id: 135
       target_name: null
     - !Single
       name:
       - invoices
-      - customer_id
+      - invoice_id
       target_id: 136
       target_name: null
     - !Single
       name:
       - invoices
-      - invoice_date
+      - customer_id
       target_id: 137
       target_name: null
     inputs:
@@ -82,7 +82,7 @@ frames:
       table:
       - default_db
       - invoices
-- - 1:164-202
+- - 1:164-216
   - columns:
     - !Single
       name:
@@ -94,6 +94,12 @@ frames:
       name:
       - count
       target_id: 162
+      target_name: null
+    - !Single
+      name:
+      - invoices
+      - invoice_date
+      target_id: 164
       target_name: null
     inputs:
     - id: 133
@@ -111,7 +117,17 @@ nodes:
   parent: 127
 - id: 123
   kind: Ident
-  span: 1:99-109
+  span: 1:99-111
+  ident: !Ident
+  - this
+  - invoices
+  - invoice_date
+  targets:
+  - 121
+  parent: 126
+- id: 124
+  kind: Ident
+  span: 1:113-123
   ident: !Ident
   - this
   - invoices
@@ -119,23 +135,13 @@ nodes:
   targets:
   - 121
   parent: 126
-- id: 124
+- id: 125
   kind: Ident
-  span: 1:111-122
+  span: 1:125-136
   ident: !Ident
   - this
   - invoices
   - customer_id
-  targets:
-  - 121
-  parent: 126
-- id: 125
-  kind: Ident
-  span: 1:124-136
-  ident: !Ident
-  - this
-  - invoices
-  - invoice_date
   targets:
   - 121
   parent: 126
@@ -163,7 +169,17 @@ nodes:
   parent: 139
 - id: 135
   kind: Ident
-  span: 1:23-33
+  span: 1:23-35
+  ident: !Ident
+  - this
+  - invoices
+  - invoice_date
+  targets:
+  - 133
+  parent: 138
+- id: 136
+  kind: Ident
+  span: 1:37-47
   ident: !Ident
   - this
   - invoices
@@ -171,23 +187,13 @@ nodes:
   targets:
   - 133
   parent: 138
-- id: 136
+- id: 137
   kind: Ident
-  span: 1:35-46
+  span: 1:49-60
   ident: !Ident
   - this
   - invoices
   - customer_id
-  targets:
-  - 133
-  parent: 138
-- id: 137
-  kind: Ident
-  span: 1:48-60
-  ident: !Ident
-  - this
-  - invoices
-  - invoice_date
   targets:
   - 133
   parent: 138
@@ -212,7 +218,7 @@ nodes:
   children:
   - 139
   - 127
-  parent: 165
+  parent: 166
 - id: 141
   kind: Ident
   span: 1:149-160
@@ -221,35 +227,46 @@ nodes:
   - invoices
   - customer_id
   targets:
-  - 136
+  - 137
   parent: 142
 - id: 142
   kind: Tuple
   span: 1:147-162
   children:
   - 141
-  parent: 165
+  parent: 166
 - id: 162
   kind: RqOperator
   span: 1:184-200
   alias: count
   targets:
   - 163
-  parent: 164
+  parent: 165
 - id: 163
   kind: Literal
 - id: 164
-  kind: Tuple
-  span: 1:174-202
-  children:
-  - 162
+  kind: Ident
+  span: 1:202-214
+  ident: !Ident
+  - this
+  - invoices
+  - invoice_date
+  targets:
+  - 135
   parent: 165
 - id: 165
+  kind: Tuple
+  span: 1:174-216
+  children:
+  - 162
+  - 164
+  parent: 166
+- id: 166
   kind: 'TransformCall: Aggregate'
-  span: 1:164-202
+  span: 1:164-216
   children:
   - 140
-  - 164
+  - 165
   - 142
 ast:
   name: Project
@@ -278,14 +295,14 @@ ast:
               args:
               - Tuple:
                 - Ident:
+                  - invoice_date
+                  span: 1:23-35
+                - Ident:
                   - invoice_id
-                  span: 1:23-33
+                  span: 1:37-47
                 - Ident:
                   - customer_id
-                  span: 1:35-46
-                - Ident:
-                  - invoice_date
-                  span: 1:48-60
+                  span: 1:49-60
                 span: 1:21-62
             span: 1:14-62
           - FuncCall:
@@ -314,14 +331,14 @@ ast:
                       args:
                       - Tuple:
                         - Ident:
+                          - invoice_date
+                          span: 1:99-111
+                        - Ident:
                           - invoice_id
-                          span: 1:99-109
+                          span: 1:113-123
                         - Ident:
                           - customer_id
-                          span: 1:111-122
-                        - Ident:
-                          - invoice_date
-                          span: 1:124-136
+                          span: 1:125-136
                         span: 1:97-138
                     span: 1:90-138
                 span: 1:74-138
@@ -355,8 +372,11 @@ ast:
                           span: 1:190-200
                       span: 1:184-200
                       alias: count
-                    span: 1:174-202
-                span: 1:164-202
-            span: 1:141-203
-        span: 1:0-203
-    span: 1:0-203
+                    - Ident:
+                      - invoice_date
+                      span: 1:202-214
+                    span: 1:174-216
+                span: 1:164-216
+            span: 1:141-217
+        span: 1:0-217
+    span: 1:0-217

@@ -12,9 +12,8 @@ WITH table_0 AS (
 ),
 table_1 AS (
   SELECT
-    invoice_line_id,
-    invoice_id,
-    NULL
+    NULL,
+    invoice_id
   FROM
     invoice_items
 )

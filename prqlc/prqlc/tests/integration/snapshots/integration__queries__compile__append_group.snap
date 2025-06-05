@@ -1,11 +1,10 @@
 ---
 source: prqlc/prqlc/tests/integration/queries.rs
-expression: "from invoices\nselect { invoice_id, customer_id, invoice_date }\nappend (\n  from invoices\n  select { invoice_id, customer_id, invoice_date }\n)\ngroup { customer_id } (aggregate { count = count invoice_id })\n"
+expression: "from invoices\nselect { invoice_date, invoice_id, customer_id }\nappend (\n  from invoices\n  select { invoice_date, invoice_id, customer_id }\n)\ngroup { customer_id } (aggregate { count = count invoice_id, invoice_date })\n"
 input_file: prqlc/prqlc/tests/integration/queries/append_group.prql
 ---
 WITH table_0 AS (
   SELECT
-    invoice_id,
     customer_id,
     invoice_date
   FROM
@@ -13,7 +12,8 @@ WITH table_0 AS (
 ),
 table_1 AS (
   SELECT
-    customer_id
+    customer_id,
+    invoice_date
   FROM
     invoices
   UNION
@@ -25,7 +25,8 @@ table_1 AS (
 )
 SELECT
   customer_id,
-  COUNT(*) AS count
+  COUNT(*) AS count,
+  invoice_date
 FROM
   table_1
 GROUP BY
