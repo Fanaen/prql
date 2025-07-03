@@ -647,7 +647,7 @@ fn query_to_set_expr(query: sql_ast::Query, context: &mut Context) -> Box<SetExp
         && query.fetch.is_none()
         && query.locks.is_empty();
 
-    if is_simple {
+    if is_simple && !matches!(context.dialect_enum, Dialect::BigQuery) {
         return query.body;
     }
 
