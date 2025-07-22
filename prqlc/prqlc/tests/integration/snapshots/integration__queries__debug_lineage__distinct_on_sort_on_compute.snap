@@ -43,8 +43,8 @@ frames:
     - !All
       input_id: 124
       except:
-      - customer_id
       - billing_city
+      - customer_id
       - billing_country
     - !Single
       name:
@@ -80,8 +80,8 @@ frames:
     - !All
       input_id: 124
       except:
-      - customer_id
       - billing_city
+      - customer_id
       - billing_country
     - !Single
       name:
